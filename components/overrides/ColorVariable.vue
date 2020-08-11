@@ -2,7 +2,9 @@
   div
     button(@click="removeStyles") Remove overrides
     div(v-for="style of styles")
-      ColorPicker(:name="style.key" :value="style.value" @change="setStyle")
+      h4 {{style.name}}
+      div(v-for="variable in style.variables")
+        ColorPicker(:name="variable.key" :value="variable.value" @change="setStyle")
 </template>
 
 <script>
@@ -26,18 +28,9 @@ export default {
 const styles = ref([]); // Hold an Array of :root styles
 
 function updateStyles() {
-  styles.value = getRootStyles();
-  console.log(
-    "CSS vars",
-    styles.value.length,
-    styles.value.map(style => {
-      const { key, value } = style;
-      return {
-        key,
-        value
-      };
-    })
-  );
+  const newStyles = getRootStyles();
+  styles.value = JSON.parse(JSON.stringify(newStyles));
+  console.info(`CSS vars ${styles.value.length}`, styles.value);
 }
 
 // Watch for :root variable changes
@@ -69,32 +62,72 @@ function watchForStyleChanges() {
   }); // Observe!
 }
 
+// Converts JS to CSS
+function objToCss(style) {
+  return Object.entries(style)
+    .map(([k, v]) => `${k}:${v}`)
+    .join(";");
+}
+
 // Get all the :root styles
 // https://stackoverflow.com/a/54851636/1114901
 function getRootStyles() {
   // Case: if there's a theme class, we should
 
   // Expects a CSS rule style
-  return [].slice
+  const output = [].slice
     .call(document.styleSheets)
     .map(styleSheet => [].slice.call(styleSheet.cssRules))
     .flat()
-    .filter(
-      cssRule =>
+    .filter(cssRule => {
+      if (
         cssRule.selectorText === ":root" ||
         cssRule.selectorText.includes("-mode")
-    )
-    .map(cssRule =>
-      cssRule.cssText
-        .split("{")[1]
-        .split("}")[0]
-        .trim()
-        .split(";")
-    )
-    .flat()
-    .filter(text => text !== "")
-    .map(text => text.split(":"))
-    .map(parts => ({ key: parts[0].trim(), value: parts[1].trim() }));
+      ) {
+        return true;
+      } else {
+        return false;
+      }
+    })
+    .map(cssRule => {
+      const cssToJson = (style = "") => {
+        return style.split(";").reduce((ruleMap, ruleString) => {
+          const rulePair = ruleString.split(":");
+          console.log(rulePair);
+          ruleMap[rulePair[0].trim()] = rulePair[1].trim();
+          return ruleMap;
+        }, {});
+      };
+
+      const outputObject = (className, styles) => ({
+        name: className,
+        styles: [...styles]
+      });
+
+      // =====================
+
+      const cssruleToArray = cssRule => {
+        return cssRule.cssText
+          .split("{")[1]
+          .split("}")[0]
+          .trim()
+          .split(";")
+          .flat()
+          .filter(text => text !== "")
+          .map(text => text.split(":"))
+          .map(parts => ({ key: parts[0].trim(), value: parts[1].trim() }));
+      };
+
+      // =====================
+
+      // Format it nicely
+      return {
+        name: cssRule.selectorText,
+        variables: cssruleToArray(cssRule)
+      };
+    });
+
+  return output;
 }
 
 // Set a root style by key
@@ -108,5 +141,4 @@ function removeStyles() {
 }
 </script>
 
-<style lang="scss" scoped>
-</style>
+<style lang="scss" scoped></style>
