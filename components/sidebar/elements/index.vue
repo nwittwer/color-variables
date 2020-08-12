@@ -63,13 +63,10 @@ export default {
     });
 
     function highlight(el) {
-      if (el.includes(":root")) {
-        // Notify the user
-        // notify(
-        //   "error",
-        //   "Element not highlighted. Cannot select the :root element"
-        // );
-        console.error("Cannot highlight the :root element");
+      if ([":root", "html, body"].some(i => el.includes(i))) {
+        console.error(
+          "Cannot highlight this element. Proabably :root, html, or body"
+        );
         return false;
       }
 
@@ -165,13 +162,17 @@ export default {
         console.log(`Added highlight selector: .${highlightSelectorName}`);
         const style = document.createElement("style");
         style.type = "text/css";
-        style.innerHTML = `.${highlightSelectorName} { box-shadow: 0 4px 20px red!important }"`;
+        style.innerHTML = `.${highlightSelectorName} { transform: scale(1.2); box-shadow: 0 0 2px gray inset, 0 0 10px gray!important; transition: all 150ms ease-out}"`;
         document.getElementsByTagName("head")[0].appendChild(style);
       }
 
       // Start the FE effects
       _el.classList.add(highlightSelectorName); // Temporarily add highlight styles
-      _el.scrollIntoView(); // Scroll into view
+      _el.scrollIntoView({
+        behavior: "auto", // smooth
+        block: "center",
+        inline: "center"
+      }); // Scroll into view
 
       // Remove after a few seconds
       setTimeout(() => {
@@ -208,7 +209,7 @@ export default {
       highlight,
       stripVueDataAttrs: selector => {
         const str = "asd-0.testing";
-        const regex = /\[(.*?)\]/;
+        const regex = /\[(.*?)\]/g;
         return selector.replace(regex, ""); // Remove the [data-v-*]
       }
     };
