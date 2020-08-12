@@ -3,7 +3,7 @@
     button(@click="removeStyles") Remove overrides
     div(v-for="style of styles")
       h4 {{style.name}}
-      div(v-for="variable in style.variables")
+      div.style(v-for="variable in style.variables")
         ColorPicker(:name="variable.key" :value="variable.value" @change="setStyle")
 </template>
 
@@ -35,4 +35,10 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.style {
+  margin-bottom: 1rem;
+  padding-bottom: 0.25rem;
+  border-bottom: 1px solid #d6d6d6;
+}
+</style>

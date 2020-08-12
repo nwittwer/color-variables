@@ -1,5 +1,5 @@
 <template lang="pug">
-  div
+  div.sidebar
     h2 Themes
     ColorModePicker
     b-tabs(v-model="activeTab")
@@ -29,4 +29,10 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.sidebar {
+  border-left: 1px solid #a0a0a0;
+  color: #353535;
+  background: #efefef;
+}
+</style>

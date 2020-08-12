@@ -72,7 +72,6 @@ body {
   height: 100vh;
   top: 0;
   overflow: auto;
-  border-left: 1px solid #a0a0a0;
   padding: 0 0.5rem;
   text-overflow: ellipsis;
 }

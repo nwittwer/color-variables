@@ -117,7 +117,7 @@ export default {
     border: 1px solid transparent;
 
     &:hover {
-      border: 1px solid var(--utility-divider);
+      border: 1px solid gray;
     }
   }
 }
