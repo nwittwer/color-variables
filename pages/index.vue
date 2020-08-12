@@ -29,6 +29,15 @@
           h2 Title
           p This is some text
         .modal__background
+    section
+      .card
+        .card__header
+        .card__image
+        .card__content
+          h3 Clincase ePRO
+          p This is some other text content
+          a(href="#") Link
+        .card__footer
 </template>
 
 <script></script>
@@ -56,6 +65,15 @@ section {
 /////////////////
 
 // Headers
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  color: var(--text-high-contrast);
+}
+
 h1 {
   font-size: 48px;
   line-height: 60px;
@@ -109,10 +127,11 @@ h6 {
 p {
   font-size: 1rem;
   line-height: 1.4;
+  color: var(--text-high-contrast);
 }
 
 a {
-  color: var(--color);
+  color: var(--brand-primary-color);
   text-decoration: underline;
 }
 
@@ -120,15 +139,15 @@ a {
 // Utilities
 
 .success {
-  color: var(--text-success);
-  border: 1px solid var(--text-success);
+  color: var(--utility-success);
+  border: 1px solid var(--utility-success);
   display: block;
   padding: 1rem;
 }
 
 .error {
-  color: var(--text-error);
-  border: 1px solid var(--text-error);
+  color: var(--utility-error);
+  border: 1px solid var(--utility-error);
   display: block;
   padding: 1rem;
 }
@@ -170,9 +189,10 @@ button {
   position: relative;
   height: 500px;
   width: 100%;
+  display: block;
 
   .modal__inner {
-    background: var(--bg-color);
+    background: var(--fg-color);
     position: absolute;
     top: 50%;
     left: 50%;
@@ -184,9 +204,36 @@ button {
   }
 
   .modal__background {
-    background: var(--bg-high-contrast-inverted);
+    background: var(--bg-high-contrast);
     height: 100%;
     width: 100%;
+  }
+}
+
+///////////////////////////////////
+// Cards
+.card {
+  position: relative;
+  width: 400px;
+  max-width: 100%;
+  background-color: var(--fg-color);
+
+  .card__header {
+  }
+
+  .card__image {
+    height: 300px;
+    width: 100%;
+    background-image: url(https://clincase.com/wp-content/uploads/2015/04/clincase-clinical-trials-software-60.jpg);
+    background-size: cover;
+  }
+
+  .card__content {
+    padding: 1rem;
+  }
+
+  .card__footer {
+    padding: 1rem;
   }
 }
 </style>
