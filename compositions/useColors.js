@@ -2,9 +2,10 @@
 // It will also manage
 import { ref } from "@nuxtjs/composition-api";
 
-export default function useColors() {
-  const styles = ref([]); // Hold an Array of :root styles
+const styles = ref([]); // Array of :root styles
+const elements = ref([]); // Array of DOM Element selectors (i.e. '.form', '.button')
 
+export default function useColors() {
   function updateStyles() {
     const newStyles = getRootStyles();
     styles.value = JSON.parse(JSON.stringify(newStyles));
@@ -43,18 +44,9 @@ export default function useColors() {
     }); // Observe!
   }
 
-  // Converts JS to CSS
-  function objToCss(style) {
-    return Object.entries(style)
-      .map(([k, v]) => `${k}:${v}`)
-      .join(";");
-  }
-
   // Get all the :root styles
   // https://stackoverflow.com/a/54851636/1114901
   function getRootStyles() {
-    const selectorsUsingCssVariables = []; // Store a list of all the selectors using CSS Variables
-
     const cssruleToArray = cssRule => {
       return cssRule.cssText
         .split("{")[1]
@@ -114,7 +106,7 @@ export default function useColors() {
         // Create a list of all the classes that are using CSS Variables
         if (getCssVariables(cssRule)) {
           const arrayOfVariables = getCssVariables(cssRule);
-          selectorsUsingCssVariables.push(arrayOfVariables.selector); // Add the name of the Class
+          elements.value.push(arrayOfVariables.selector); // Add the name of the Class
         }
 
         // Continue creating a nice array of all the classes & variables in them
@@ -166,8 +158,6 @@ export default function useColors() {
         };
       });
 
-    console.log(selectorsUsingCssVariables);
-
     return output;
   }
 
@@ -184,9 +174,17 @@ export default function useColors() {
   // Expose the following:
   return {
     styles,
+    elements,
     setStyle,
     removeStyles,
     updateStyles,
     watchForStyleChanges
   };
+}
+
+// Converts JS to CSS
+function objToCss(style) {
+  return Object.entries(style)
+    .map(([k, v]) => `${k}:${v}`)
+    .join(";");
 }
