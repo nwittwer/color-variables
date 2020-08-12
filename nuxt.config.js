@@ -47,7 +47,7 @@ export default {
     [
       "nuxt-buefy",
       {
-        css: false
+        // css: false
       }
     ]
   ],
