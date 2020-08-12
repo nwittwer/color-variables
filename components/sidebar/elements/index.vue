@@ -2,17 +2,17 @@
   div
     h2 Definitions
     div.element(v-for="element in definitions" :key="element.selector")
-      div.selector-name(@click="highlight(element.selector)") {{ element.selector }}
+      div.selector-name(@mouseover="highlight(element.selector)") {{ element.selector }}
       div(v-for="(properties, i) in element.values" :key="i")
-        div {{ properties.key }}
-        div {{ properties.value }}
+        span {{ properties.key }}:
+        span {{ properties.value }}
     hr
     h2 Usage
     div.element(v-for="element in properties" :key="element.selector")
-      div.selector-name(@click="highlight(element.selector)") {{ element.selector }}
+      div.selector-name(@mouseover="highlight(element.selector)") {{ element.selector }}
       div(v-for="(properties, i) in element.values" :key="i")
-        div {{ properties.key }}
-        div {{ properties.value }}
+        span {{ properties.key }}:
+        span {{ properties.value }}
 </template>
 
 <script>
@@ -25,6 +25,7 @@ export default {
     const activeTab = ref(0);
 
     const elementArray = computed(() => {
+      console.log("updating array of elements", elements);
       // Get the items
       const items = unref(elements); // Expects a Vue Ref (Array)
       return items.filter(item => {
@@ -58,6 +59,15 @@ export default {
     });
 
     function highlight(el) {
+      if (el.includes(":root")) {
+        // Notify the user
+        notify(
+          "error",
+          "Element not highlighted. Cannot select the :root element"
+        );
+        return false;
+      }
+
       const pseudos = [
         ":hover",
         ":active",
@@ -76,7 +86,6 @@ export default {
           el = el.split(pseudo).join("");
         }
         _el = document.querySelector(el);
-        if (!_el) notify("error", "Element could not be highlighted.");
       } else {
         _el = document.querySelector(el);
       }
@@ -162,7 +171,7 @@ export default {
       // Remove after a few seconds
       setTimeout(() => {
         _el.classList.remove(highlightSelectorName);
-      }, 3000);
+      }, 1000);
     }
 
     function notify(status, msg) {
@@ -198,6 +207,8 @@ export default {
   }
 
   .selector-name {
+    color: blue;
+    user-select: none;
     font-weight: bold;
     cursor: pointer;
   }

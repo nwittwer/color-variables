@@ -9,7 +9,10 @@ export default function useColors() {
   function updateStyles() {
     const newStyles = getRootStyles();
     styles.value = JSON.parse(JSON.stringify(newStyles));
-    console.info(`CSS vars ${styles.value.length}`, styles.value);
+    console.info(
+      `CSS var definitions (:root elements) ${styles.value.length}`,
+      styles.value
+    );
   }
 
   // Watch for :root variable changes
@@ -48,6 +51,8 @@ export default function useColors() {
   // https://stackoverflow.com/a/54851636/1114901
   function getRootStyles() {
     console.log("Stylesheets loaded:", document.styleSheets);
+
+    elements.value = []; // This will replace the existing array
 
     // Expects a CSS rule style
     const output = [].slice
@@ -106,7 +111,10 @@ export default function useColors() {
             .flat()
             .filter(text => text !== "")
             .map(text => text.split(":"))
-            .map(parts => ({ key: parts[0].trim(), value: parts[1].trim() }));
+            .map(parts => ({
+              key: parts[0].trim(),
+              value: parts[1].trim()
+            }));
         };
 
         // =====================
@@ -117,6 +125,9 @@ export default function useColors() {
           variables: cssruleToArray(cssRule)
         };
       });
+
+    // Replace the current elements value
+    // elements.value = newElementsArray;
 
     return output;
   }
