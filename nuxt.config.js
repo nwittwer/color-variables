@@ -43,7 +43,13 @@ export default {
     // Doc: https://http.nuxtjs.org
     "@nuxt/http",
     // TODO: Remove it if you want to eject from codeSandbox
-    "./codesandbox"
+    "./codesandbox",
+    [
+      "nuxt-buefy",
+      {
+        css: false
+      }
+    ]
   ],
 
   buildModules: ["@nuxtjs/color-mode", "@nuxtjs/composition-api"],

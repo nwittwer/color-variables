@@ -92,6 +92,7 @@ function getRootStyles() {
   // Expects a CSS rule style
   const output = [].slice
     .call(document.styleSheets)
+    .filter(styleSheet => !styleSheet.href) // Remove external styleSheets from our search
     .map(styleSheet => [].slice.call(styleSheet.cssRules))
     .flat()
     .filter(cssRule => {
