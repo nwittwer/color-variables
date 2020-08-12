@@ -1,15 +1,19 @@
 <template lang="pug">
   div
     h2 Definitions
-    div.element(v-for="element in definitions" :key="element.selector")
-      div.selector-name(@mouseover="highlight(element.selector)") {{ element.selector }}
+    div.element(
+      v-for="element in definitions" 
+      :key="element.selector" 
+      @mouseover="highlight(element.selector)")
+
+      div.selector-name {{ element.selector }}
       div(v-for="(properties, i) in element.values" :key="i")
         span {{ properties.key }}:
         span {{ properties.value }}
     hr
     h2 Usage
-    div.element(v-for="element in properties" :key="element.selector")
-      div.selector-name(@mouseover="highlight(element.selector)") {{ element.selector }}
+    div.element(v-for="element in properties" :key="element.selector" @mouseover="highlight(element.selector)")
+      div.selector-name {{ stripVueDataAttrs(element.selector) }}
       div(v-for="(properties, i) in element.values" :key="i")
         span {{ properties.key }}:
         span {{ properties.value }}
@@ -61,10 +65,11 @@ export default {
     function highlight(el) {
       if (el.includes(":root")) {
         // Notify the user
-        notify(
-          "error",
-          "Element not highlighted. Cannot select the :root element"
-        );
+        // notify(
+        //   "error",
+        //   "Element not highlighted. Cannot select the :root element"
+        // );
+        console.error("Cannot highlight the :root element");
         return false;
       }
 
@@ -171,7 +176,7 @@ export default {
       // Remove after a few seconds
       setTimeout(() => {
         _el.classList.remove(highlightSelectorName);
-      }, 1000);
+      }, 250);
     }
 
     function notify(status, msg) {
@@ -195,15 +200,33 @@ export default {
       }
     }
 
-    return { elements, definitions, properties, activeTab, highlight };
+    return {
+      elements,
+      definitions,
+      properties,
+      activeTab,
+      highlight,
+      stripVueDataAttrs: selector => {
+        const str = "asd-0.testing";
+        const regex = /\[(.*?)\]/;
+        return selector.replace(regex, ""); // Remove the [data-v-*]
+      }
+    };
   }
 };
 </script>
 
 <style lang="scss" scoped>
 .element {
+  padding: 0.25rem;
+  cursor: default;
+
   &:not(:last-child) {
     margin-bottom: 1rem;
+  }
+
+  &:hover {
+    background: #e0e0e0;
   }
 
   .selector-name {
