@@ -47,18 +47,6 @@ export default function useColors() {
   // Get all the :root styles
   // https://stackoverflow.com/a/54851636/1114901
   function getRootStyles() {
-    const cssruleToArray = cssRule => {
-      return cssRule.cssText
-        .split("{")[1]
-        .split("}")[0]
-        .trim()
-        .split(";")
-        .flat()
-        .filter(text => text !== "")
-        .map(text => text.split(":"))
-        .map(parts => ({ key: parts[0].trim(), value: parts[1].trim() }));
-    };
-
     console.log("Stylesheets loaded:", document.styleSheets);
 
     // Expects a CSS rule style
@@ -80,33 +68,10 @@ export default function useColors() {
       .map(styleSheet => [].slice.call(styleSheet.cssRules))
       .flat()
       .filter(cssRule => {
-        const getCssVariables = rule => {
-          // Array of key/values
-          const testArr = cssruleToArray(cssRule);
-
-          // The regex expression to look for
-          // Tests: https://regexr.com/5a2pp
-          const test = new RegExp("(-{2})(?!$.)([a-z]|[A-Z])[^:;)]*", "g");
-
-          // Of the key/value pairs, which contain CSS Variables declarations or usages?
-          const matches = testArr.filter(
-            rule => test.exec(rule.key) || test.exec(rule.value)
-          );
-
-          if (testArr.length && matches.length) {
-            return {
-              selector: cssRule.selectorText,
-              values: matches
-            };
-          } else {
-            return false;
-          }
-        };
-
         // Create a list of all the classes that are using CSS Variables
         if (getCssVariables(cssRule)) {
           const arrayOfVariables = getCssVariables(cssRule);
-          elements.value.push(arrayOfVariables.selector); // Add the name of the Class
+          elements.value.push(arrayOfVariables); // Add the name of the Class
         }
 
         // Continue creating a nice array of all the classes & variables in them
@@ -121,19 +86,14 @@ export default function useColors() {
         }
       })
       .map(cssRule => {
-        const cssToJson = (style = "") => {
-          return style.split(";").reduce((ruleMap, ruleString) => {
-            const rulePair = ruleString.split(":");
-            console.log(rulePair);
-            ruleMap[rulePair[0].trim()] = rulePair[1].trim();
-            return ruleMap;
-          }, {});
-        };
-
-        const outputObject = (className, styles) => ({
-          name: className,
-          styles: [...styles]
-        });
+        // const cssToJson = (style = "") => {
+        //   return style.split(";").reduce((ruleMap, ruleString) => {
+        //     const rulePair = ruleString.split(":");
+        //     console.log(rulePair);
+        //     ruleMap[rulePair[0].trim()] = rulePair[1].trim();
+        //     return ruleMap;
+        //   }, {});
+        // };
 
         // =====================
 
@@ -181,6 +141,41 @@ export default function useColors() {
     watchForStyleChanges
   };
 }
+
+const cssruleToArray = cssRule => {
+  return cssRule.cssText
+    .split("{")[1]
+    .split("}")[0]
+    .trim()
+    .split(";")
+    .flat()
+    .filter(text => text !== "")
+    .map(text => text.split(":"))
+    .map(parts => ({ key: parts[0].trim(), value: parts[1].trim() }));
+};
+
+const getCssVariables = rule => {
+  // Array of key/values
+  const testArr = cssruleToArray(rule);
+
+  // The regex expression to look for
+  // Tests: https://regexr.com/5a2pp
+  const test = new RegExp("(-{2})(?!$.)([a-z]|[A-Z])[^:;)]*", "g");
+
+  // Of the key/value pairs, which contain CSS Variables declarations or usages?
+  const matches = testArr.filter(
+    rule => test.exec(rule.key) || test.exec(rule.value)
+  );
+
+  if (testArr.length && matches.length) {
+    return {
+      selector: rule.selectorText,
+      values: matches
+    };
+  } else {
+    return false;
+  }
+};
 
 // Converts JS to CSS
 function objToCss(style) {

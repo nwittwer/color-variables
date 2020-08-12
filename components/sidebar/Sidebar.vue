@@ -7,7 +7,6 @@
         h2 Color overrides
         ColorVariable
       b-tab-item(label="Elements")
-        h2 DOM Elements
         DomElements
 </template>
 
