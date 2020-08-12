@@ -16,7 +16,6 @@ export default {
 };
 </script>
 
-
 <style>
 html,
 body {
@@ -41,9 +40,9 @@ body {
 }
 
 .container {
-  max-width: 1200px;
+  /* max-width: 1200px; */
   width: 100%;
-  padding: 0 2rem;
+  /* padding: 0 2rem; */
   margin: 0 auto;
   display: grid;
   grid-template-columns: 4fr 1fr;
@@ -54,6 +53,9 @@ body {
 
 .content {
   grid-area: content;
+  padding: 0 2rem;
+  max-width: 850px;
+  margin: 0 auto;
 }
 
 .nav {
@@ -61,5 +63,8 @@ body {
   position: sticky;
   height: 100vh;
   top: 0;
+  overflow: auto;
+  border-left: 1px solid var(--utility-divider);
+  padding: 0 0.5rem;
 }
 </style>

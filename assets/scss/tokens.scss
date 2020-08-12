@@ -1,0 +1,89 @@
+$grayscaleColors: (
+  10: #171717,
+  20: #2e2e2e,
+  30: #454545,
+  40: #5c5c5c,
+  50: #737373,
+  60: #8a8a8a,
+  70: #a1a1a1,
+  80: #b8b8b8,
+  90: #cfcfcf,
+  100: #e8e8e8
+) !default;
+
+$epro-light: (
+  "brand": #00bcc0,
+  "medium": 500,
+  "bold": 700
+);
+
+// GLOBAL OVERRIDES
+:root {
+  // Brand
+  //// Primary
+  --brand-primary-color-light: #00d8db;
+  --brand-primary-color: #00bcc0;
+  --brand-primary-color-dark: #008688;
+  //// Secondary
+  --brand-secondary-color-light: #001eca;
+  --brand-secondary-color: #001799;
+  --brand-secondary-color-dark: #001170;
+
+  //////////////////////////////////////
+  //////////////////////////////////////
+  //////////////////////////////////////
+
+  // Text colors
+  //// Readability
+  --text-high-contrast: black;
+  --text-high-contrast-inverted: white;
+
+  //////////////////////////////////////
+  //////////////////////////////////////
+  //////////////////////////////////////
+
+  // Fill colors
+  // Main bg
+  --bg-color: white;
+  --bg-high-contrast: white;
+  --bg-high-contrast-inverted: black;
+
+  //////////////////////////////////////
+  //////////////////////////////////////
+  //////////////////////////////////////
+
+  //// Utility
+  --utility-divider: #bebebe;
+  --utility-success: green;
+  --utility-error: red;
+}
+
+// Using Nuxt's color-mode module
+// It always appends "-mode"
+// https://nuxtjs.org/blog/going-dark-with-nuxtjs-color-mode/#how-does-it-work
+
+// .edc-3-mode {
+//   --color: #ebf4f1;
+//   --color-primary: #41b38a;
+//   --color-secondary: #fdf9f3;
+//   --bg: #091a28;
+//   --bg-secondary: #071521;
+//   --border-color: #0d2538;
+// }
+
+// .epro-dark-mode {
+//   --color: #ebf4f1;
+//   --color-primary: #41b38a;
+//   --color-secondary: #fdf9f3;
+//   --bg: #091a28;
+//   --bg-secondary: #071521;
+//   --border-color: #0d2538;
+// }
+
+// .epro-light-mode {
+//   --color: #433422;
+//   --color-secondary: #504231;
+//   --bg: #f1e7d0;
+//   --bg-secondary: #eae0c9;
+//   --border-color: #ded0bf;
+// }

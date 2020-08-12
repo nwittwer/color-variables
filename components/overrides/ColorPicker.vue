@@ -1,11 +1,12 @@
 <template lang="pug">
   div.color-picker-container
-    div.form-group
-      div {{ props.name }}
-      div.picker
+    div.picker
+      chrome-picker(v-show="pickerIsOpen" ref="domElement" v-model="colorValue" @input="updateValue")
+      div.form-group
         span.color-preview(@click.stop="togglePicker" :style="`background: ${colorValue}`")
-        chrome-picker(v-show="pickerIsOpen" ref="domElement" v-model="colorValue" @input="updateValue")
-      input(type="text" class="form-control" v-model="colorValue")
+        div.group
+          span {{ props.name }}
+          input(type="text" class="form-control" v-model="colorValue")
 </template>
 
 <script>
@@ -43,7 +44,10 @@ export default {
     });
 
     // Update value if props change
-    watch(() => props.value, () => setProps());
+    watch(
+      () => props.value,
+      () => setProps()
+    );
 
     // Notify parent when the color value is changed
     watch(colorValue, () =>
@@ -100,10 +104,21 @@ export default {
 }
 
 .form-group {
-  display: inline-flex;
+  display: flex;
+  align-items: center;
+
+  // .group {
+  // display: flex;
+  // }
 
   input {
     width: 4rem;
+    display: block;
+    border: 1px solid transparent;
+
+    &:hover {
+      border: 1px solid var(--utility-divider);
+    }
   }
 }
 
@@ -123,7 +138,7 @@ export default {
   .vc-chrome {
     position: absolute;
     top: 0;
-    right: 0;
+    left: 0;
     z-index: 9;
   }
 }

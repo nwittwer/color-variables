@@ -51,6 +51,9 @@ function watchForStyleChanges() {
       }
 
       updateStyles();
+
+      // Temporarily highlight that DOMElement
+      // TODO See which
     });
   });
 
@@ -72,7 +75,19 @@ function objToCss(style) {
 // Get all the :root styles
 // https://stackoverflow.com/a/54851636/1114901
 function getRootStyles() {
-  // Case: if there's a theme class, we should
+  const selectorsUsingCssVariables = []; // Store a list of all the selectors using CSS Variables
+
+  const cssruleToArray = cssRule => {
+    return cssRule.cssText
+      .split("{")[1]
+      .split("}")[0]
+      .trim()
+      .split(";")
+      .flat()
+      .filter(text => text !== "")
+      .map(text => text.split(":"))
+      .map(parts => ({ key: parts[0].trim(), value: parts[1].trim() }));
+  };
 
   // Expects a CSS rule style
   const output = [].slice
@@ -80,6 +95,35 @@ function getRootStyles() {
     .map(styleSheet => [].slice.call(styleSheet.cssRules))
     .flat()
     .filter(cssRule => {
+      const getCssVariables = rule => {
+        // Array of key/values
+        const testArr = cssruleToArray(cssRule);
+
+        // The regex expression to look for
+        // Tests: https://regexr.com/5a2pp
+        const test = new RegExp("(\-{2})(?!$.)([a-z]|[A-Z])[^:;)]*", "g");
+
+        // Of the key/value pairs, which contain CSS Variables declarations or usages?
+        const matches = testArr.filter(
+          rule => test.exec(rule.key) || test.exec(rule.value)
+        );
+
+        if (testArr.length && matches.length) {
+          return {
+            selector: cssRule.selectorText,
+            values: matches
+          };
+        } else {
+          return false;
+        }
+      };
+
+      // Create a list of all the classes that are using CSS Variables
+      if (getCssVariables(cssRule)) {
+        const arrayOfVariables = getCssVariables(cssRule);
+        selectorsUsingCssVariables.push(arrayOfVariables.selector); // Add the name of the Class
+      }
+
       if (
         cssRule.selectorText === ":root" ||
         cssRule.selectorText.includes("-mode")
@@ -126,6 +170,8 @@ function getRootStyles() {
         variables: cssruleToArray(cssRule)
       };
     });
+
+  console.log(selectorsUsingCssVariables);
 
   return output;
 }
