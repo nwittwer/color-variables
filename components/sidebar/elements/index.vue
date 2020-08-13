@@ -30,102 +30,13 @@
 
 <script>
 import { ref, unref, computed } from "@nuxtjs/composition-api";
-import useColors from "~/compositions/useColors.js";
+import useColors from "~/compositions/useColors";
 
 export default {
   setup(props, context) {
-    const { elements, styles } = useColors();
+    const { state } = useColors();
+    console.log(state);
     const activeTab = ref(0);
-
-    const elementArray = computed(() => {
-      console.log("updating array of elements", elements);
-      // Get the items
-      const items = unref(elements); // Expects a Vue Ref (Array)
-      return items.filter(item => {
-        return item;
-      });
-
-      // Flatten the array of arrays into one flat array
-      // https://stackoverflow.com/a/16299004/1114901
-      const flattened = items.reduce((p, n) => p.concat(n), []);
-      return flattened;
-    });
-
-    // Filter down to the Elements where a CSS Var is defined
-    const definitions = computed(() => {
-      return elementArray.value.filter(i => {
-        // We're inside of one Array
-        return i.values.find(e => {
-          return e.key.includes("--");
-        });
-      });
-    });
-
-    // Filter down to the Elements where a CSS Var is used
-    const elementUsage = computed(() => {
-      return elementArray.value.filter(i => {
-        // We're inside of one Array
-        return i.values.find(e => {
-          return e.value.includes("var(--");
-        });
-      });
-    });
-
-    // Return elements that aren't in either the definitions or the properties
-    // Return keys/values from o2 that are not identical/exist in o1
-    const unused = computed(() => {
-      // // Flatten the array of arrays into one flat array
-      // // https://stackoverflow.com/a/16299004/1114901
-      const flatten = arr => arr.reduce((p, n) => p.concat(n), []);
-
-      // const createDiff = (o1, o2) => {
-      //   return Object.keys(o2).reduce((diff, key) => {
-      //     // via: https://stackoverflow.com/a/37396358/1114901
-      //     console.log(o1[key], o2[key]);
-      //     if (o1[key] === o2[key]) return diff;
-      //     return {
-      //       ...diff,
-      //       [key]: o2[key]
-      //     };
-      //   }, {});
-      // };
-
-      // Find out which CSS variables are not being used by any DOMElements
-      // Return: ["--var-name-here", "--var-name-here-2"]
-      function getUnusedVariables() {
-        // This is an array of the variables as strings// All the variable definitions
-        const strDefinitions = flatten(
-          unref(definitions).map(elem => elem.values)
-        );
-        // All the Elements
-        const strElements = flatten(
-          unref(elementUsage).map(elem => elem.values)
-        );
-
-        const varsNotUsed = strElements.reduce((res, elem) => {
-          // Does the def.key exist in the elem.value?
-          // If not, it isn't being used
-          for (let def of strDefinitions) {
-            const val = def.key;
-            // Find only the ones not included
-            if (elem.value.includes(val) === false) {
-              // Prevent adding duplicate values
-              if (res.includes(val) === false) {
-                res.push(val);
-              }
-              console.log(def, elem);
-              return res;
-            } else {
-              return false;
-            }
-          }
-        }, []);
-
-        return varsNotUsed;
-      }
-
-      return getUnusedVariables(); // Finally, return a nice list back to the FE
-    });
 
     function highlight(el) {
       if ([":root", "html, body"].some(i => el.includes(i))) {
@@ -267,10 +178,10 @@ export default {
     }
 
     return {
-      elements,
-      definitions,
-      unused,
-      elementUsage,
+      elements: state.elements,
+      definitions: state.computedValues.definitions,
+      unused: state.computedValues.unusedVariables,
+      elementUsage: state.computedValues.elementUsage,
       activeTab,
       highlight,
       stripVueDataAttrs: selector => {
@@ -279,7 +190,7 @@ export default {
         return selector.replace(regex, ""); // Remove the [data-v-*]
       },
       isVariableUsed: variable => {
-        return !unref(unused).includes(variable);
+        return !unref(state.computedValues.unusedVariables).includes(variable);
       }
     };
   }

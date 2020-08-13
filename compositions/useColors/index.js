@@ -1,9 +1,8 @@
 // This will be our central state for Color Variables
 // It will also manage
-import { ref } from "@nuxtjs/composition-api";
-
-const styles = ref([]); // Array of :root styles
-const elements = ref([]); // Array of DOM Element selectors (i.e. '.form', '.button')
+import { ref, unref } from "@nuxtjs/composition-api";
+import * as state from "./state";
+import { cssruleToArray } from "./helpers";
 
 export default function useColors() {
   function updateStyles() {
@@ -86,46 +85,18 @@ export default function useColors() {
         }
       })
       .map(cssRule => {
-        // const cssToJson = (style = "") => {
-        //   return style.split(";").reduce((ruleMap, ruleString) => {
-        //     const rulePair = ruleString.split(":");
-        //     console.log(rulePair);
-        //     ruleMap[rulePair[0].trim()] = rulePair[1].trim();
-        //     return ruleMap;
-        //   }, {});
-        // };
-
-        // =====================
-
-        const cssruleToArray = cssRule => {
-          return cssRule.cssText
-            .split("{")[1]
-            .split("}")[0]
-            .trim()
-            .split(";")
-            .flat()
-            .filter(text => text !== "")
-            .map(text => text.split(":"))
-            .map(parts => ({
-              key: parts[0].trim(),
-              value: parts[1].trim()
-            }));
-        };
-
-        // =====================
-
         // Format it nicely
         return {
           name: cssRule.selectorText,
-          variables: cssruleToArray(cssRule)
+          variables: cssruleToArray(cssRule.cssText)
         };
       });
 
     // Update the elements
-    elements.value = [...newElementsArray];
+    state.elements.value = [...newElementsArray];
 
     // Set the new styles
-    styles.value = JSON.parse(JSON.stringify(output));
+    state.styles.value = JSON.parse(JSON.stringify(output));
 
     return output;
   }
@@ -142,8 +113,7 @@ export default function useColors() {
 
   // Expose the following:
   return {
-    styles,
-    elements,
+    state,
     setStyle,
     removeStyles,
     updateStyles,
@@ -151,21 +121,9 @@ export default function useColors() {
   };
 }
 
-const cssruleToArray = cssRule => {
-  return cssRule.cssText
-    .split("{")[1]
-    .split("}")[0]
-    .trim()
-    .split(";")
-    .flat()
-    .filter(text => text !== "")
-    .map(text => text.split(":"))
-    .map(parts => ({ key: parts[0].trim(), value: parts[1].trim() }));
-};
-
 const getCssVariables = rule => {
   // Array of key/values
-  const testArr = cssruleToArray(rule);
+  const testArr = cssruleToArray(rule.cssText);
 
   // The regex expression to look for
   // Tests: https://regexr.com/5a2pp
@@ -186,9 +144,22 @@ const getCssVariables = rule => {
   }
 };
 
+///////////////////////////////////
+///////////////////////////////////
+///////////////////////////////////
+
 // Converts JS to CSS
 function objToCss(style) {
   return Object.entries(style)
     .map(([k, v]) => `${k}:${v}`)
     .join(";");
+}
+
+function cssToJson(style = "") {
+  return style.split(";").reduce((ruleMap, ruleString) => {
+    const rulePair = ruleString.split(":");
+    console.log(rulePair);
+    ruleMap[rulePair[0].trim()] = rulePair[1].trim();
+    return ruleMap;
+  }, {});
 }
