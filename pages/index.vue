@@ -72,6 +72,7 @@ h4,
 h5,
 h6 {
   color: var(--text-high-contrast);
+  color: var(--text-high-contrast);
 }
 
 h1 {

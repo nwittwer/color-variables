@@ -1,30 +1,31 @@
 <template lang="pug">
   div
-    h2 Definitions
-    div.element(
-      v-for="element in definitions" 
-      :key="element.selector" 
-      @mouseover="highlight(element.selector)")
-
-      div.selector-name {{ element.selector }}
-      div(v-for="(properties, i) in element.values" :key="i")
-        span {{ properties.key }}:
-        span {{ properties.value }}
-    hr
-    h2 Usage
-    div.element(v-for="element in elementUsage" :key="element.selector" @mouseover="highlight(element.selector)")
-      div.selector-name {{ stripVueDataAttrs(element.selector) }}
-      div(v-for="(properties, i) in element.values" :key="i")
-        span {{ properties.key }}:
-        span {{ properties.value }}
-    hr
-    h2 Unused
-    div {{unused}}
-    div.element(v-for="element in unused" :key="element.selector" @mouseover="highlight(element.selector)")
-      div.selector-name {{ stripVueDataAttrs(element.selector) }}
-      div(v-for="(properties, i) in element.values" :key="i")
-        span {{ properties.key }}:
-        span {{ properties.value }}
+    div.group
+      div.group__header
+        h2 Definitions
+      div.element(
+        v-for="element in definitions" 
+        :key="element.selector" 
+        @mouseover="highlight(element.selector)")
+        div.selector-name {{ element.selector }}
+        div.instances {{ element.values.length > 1 ? `${element.values.length} definitions` : `${element.values.length} definition` }}
+        div(v-for="(properties, i) in element.values" :key="i" :class="{ 'is-unused' : !isVariableUsed(properties.key) }")
+          span {{ properties.key }}: {{ properties.value }}
+    div.group
+      div.group__header
+        h2 Unused CSS Variables
+        p Variables which were defined but never used by any DOM Elements
+      div.element(v-for="element in unused" :key="element.selector")
+        div {{ element }}
+    div.group
+      div.group__header
+        h2 Usage
+      div.element(v-for="element in elementUsage" :key="element.selector" @mouseover="highlight(element.selector)")
+        div.selector-name {{ stripVueDataAttrs(element.selector) }}
+        div.instances {{ element.values.length > 1 ? `${element.values.length} variables used` : `${element.values.length} variable used` }}
+        div(v-for="(properties, i) in element.values" :key="i")
+          span {{ properties.key }}:
+          span {{ properties.value }}
 </template>
 
 <script>
@@ -77,48 +78,53 @@ export default {
       // // https://stackoverflow.com/a/16299004/1114901
       const flatten = arr => arr.reduce((p, n) => p.concat(n), []);
 
-      const createDiff = (o1, o2) => {
-        return Object.keys(o2).reduce((diff, key) => {
-          // via: https://stackoverflow.com/a/37396358/1114901
-          console.log(o1[key], o2[key]);
-          if (o1[key] === o2[key]) return diff;
-          return {
-            ...diff,
-            [key]: o2[key]
-          };
-        }, {});
-      };
+      // const createDiff = (o1, o2) => {
+      //   return Object.keys(o2).reduce((diff, key) => {
+      //     // via: https://stackoverflow.com/a/37396358/1114901
+      //     console.log(o1[key], o2[key]);
+      //     if (o1[key] === o2[key]) return diff;
+      //     return {
+      //       ...diff,
+      //       [key]: o2[key]
+      //     };
+      //   }, {});
+      // };
 
-      // All the variable definitions
-      const strDefinitions = flatten(
-        unref(definitions).map(elem => elem.values)
-      );
-      // All the Elements
-      const strElements = flatten(unref(elementUsage).map(elem => elem.values)); // All the Element definitions
+      // Find out which CSS variables are not being used by any DOMElements
+      // Return: ["--var-name-here", "--var-name-here-2"]
+      function getUnusedVariables() {
+        // This is an array of the variables as strings// All the variable definitions
+        const strDefinitions = flatten(
+          unref(definitions).map(elem => elem.values)
+        );
+        // All the Elements
+        const strElements = flatten(
+          unref(elementUsage).map(elem => elem.values)
+        );
 
-      // Return only the ones not used
-      // This is an array of the variables as strings
-      const varsNotUsed = strElements.reduce((res, elem) => {
-        // Does the def.key exist in the elem.value?
-        // If not, it isn't being used
-        for (let def of strDefinitions) {
-          const val = def.key;
-          // Find only the ones not included
-          if (elem.value.includes(val) === false) {
-            // Prevent adding duplicate values
-            if (res.includes(val) === false) {
-              res.push(val);
+        const varsNotUsed = strElements.reduce((res, elem) => {
+          // Does the def.key exist in the elem.value?
+          // If not, it isn't being used
+          for (let def of strDefinitions) {
+            const val = def.key;
+            // Find only the ones not included
+            if (elem.value.includes(val) === false) {
+              // Prevent adding duplicate values
+              if (res.includes(val) === false) {
+                res.push(val);
+              }
+              console.log(def, elem);
+              return res;
+            } else {
+              return false;
             }
-            console.log(def, elem);
-            return res;
-          } else {
-            return false;
           }
-        }
-      }, []);
+        }, []);
 
-      console.log(varsNotUsed, strElements, strDefinitions);
-      return true;
+        return varsNotUsed;
+      }
+
+      return getUnusedVariables(); // Finally, return a nice list back to the FE
     });
 
     function highlight(el) {
@@ -271,6 +277,9 @@ export default {
         const str = "asd-0.testing";
         const regex = /\[(.*?)\]/g;
         return selector.replace(regex, ""); // Remove the [data-v-*]
+      },
+      isVariableUsed: variable => {
+        return !unref(unused).includes(variable);
       }
     };
   }
@@ -278,6 +287,19 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.group {
+  position: relative;
+  margin-bottom: 3rem;
+
+  .group__header {
+    border-bottom: 2px solid #b3b3b3;
+    position: sticky;
+    top: 0;
+    backdrop-filter: blur(10px);
+    padding: 0.5rem;
+  }
+}
+
 .element {
   padding: 0.25rem;
   cursor: default;
@@ -295,6 +317,10 @@ export default {
     user-select: none;
     font-weight: bold;
     cursor: pointer;
+  }
+
+  .is-unused {
+    color: red;
   }
 }
 </style>
