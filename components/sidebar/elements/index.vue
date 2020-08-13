@@ -12,7 +12,7 @@
         span {{ properties.value }}
     hr
     h2 Usage
-    div.element(v-for="element in properties" :key="element.selector" @mouseover="highlight(element.selector)")
+    div.element(v-for="element in elementUsage" :key="element.selector" @mouseover="highlight(element.selector)")
       div.selector-name {{ stripVueDataAttrs(element.selector) }}
       div(v-for="(properties, i) in element.values" :key="i")
         span {{ properties.key }}:
@@ -61,7 +61,7 @@ export default {
     });
 
     // Filter down to the Elements where a CSS Var is used
-    const properties = computed(() => {
+    const elementUsage = computed(() => {
       return elementArray.value.filter(i => {
         // We're inside of one Array
         return i.values.find(e => {
@@ -89,108 +89,36 @@ export default {
         }, {});
       };
 
-      // const arrayOfStyles = styles.value.map(i => {
-      //   return i.variables; // Return just the variables Array[]
-      // });
+      // All the variable definitions
+      const strDefinitions = flatten(
+        unref(definitions).map(elem => elem.values)
+      );
+      // All the Elements
+      const strElements = flatten(unref(elementUsage).map(elem => elem.values)); // All the Element definitions
 
-      // const diff = createDiff(
-      //   arrayOfStyles,
-      //   flatten(unref(elements).map(i => i.values))
-      // );
-
-      // console.log(flatten(unref(elements).map(i => i.values)));
-      // console.log("diff", diff, styles.value, elements.value);
-
-      const definedCssVariables = styles.value.reduce((res, iterator) => {
-        // Return a flat array
-        iterator.variables.map(
-          e => res.push(e.key) // Returns only the name of the CSS var (e.g. "--brand-primary-color")
-        );
-        return res; // Return as an array
-      }, []); // <-- new Array
-
-      const filtered = unref(elements).filter(function(item) {
-        // item = element array containing a list of key/value pairs
-
-        // const matches = item.values.filter(j => {
-        //   console.log(
-        //     definedCssVariables,
-        //     j.key,
-        //     definedCssVariables.some(i => definedCssVariables.includes(i.key) === true)
-        //   );
-        //   return definedCssVariables.some(i => definedCssVariables.includes(i.key) !== true);
-        // });
-
-        console.log(item);
-
-        // Find matches
-        const matches = item.values.reduce(function(res, i) {
-          // item = values[0][key,value] pairs <-- Parent data
-          // i = [key, value] pair <-- Individual key/value pairs of CSS properties, not yet filtered
-
-          // Regex to strip var(--xxx) into "--xxx"
-          function stripCssPropToVars(val) {
-            const cssVarRegex = new RegExp(
-              "(-{2})(?!$.)([a-z]|[A-Z])[^:;)]*",
-              "g"
-            );
-
-            const match = val.match(cssVarRegex);
-            return match ? match[0] : false;
-          }
-
-          const target = stripCssPropToVars(i.value); // i.e. "--brand-color-primary"
-          if (!target) return false; // Only allow CSS Variables
-
-          // Remove any keys which aren't CSS variables (i.e. don't start with "--")
-          if (target.includes("--") === false) return false;
-
-          // We have a list of CSS Variables that were defined at :root
-          // We have a list of selectors which use CSS variables
-
-          // Case 1: Is the current selector's CSS variable defined?
-          // We need to know when the root variable doesn't exist/was not found
-          const isSelectorsVariableDefined = definedCssVariables.some(
-            variable => variable.includes(target)
-          );
-
-          // Case 2: Are there any CSS variables that are defined but not used?
-          // Defined, but not used
-          // Context: Each DOMElement
-          // Returns: filtered list of results || []
-          const isVariableNotUsed = unref(properties).filter(
-            propertiesUsingVariables => {
-              console.log("properties", propertiesUsingVariables);
-
-              // Find
-              propertiesUsingVariables.values.find(kv => {});
+      // Return only the ones not used
+      // This is an array of the variables as strings
+      const varsNotUsed = strElements.reduce((res, elem) => {
+        // Does the def.key exist in the elem.value?
+        // If not, it isn't being used
+        for (let def of strDefinitions) {
+          const val = def.key;
+          // Find only the ones not included
+          if (elem.value.includes(val) === false) {
+            // Prevent adding duplicate values
+            if (res.includes(val) === false) {
+              res.push(val);
             }
-          ); // No results found
-
-          // Return the CSS variables which are not used
-          if (isSelectorsVariableDefined === false) {
-            console.log(definedCssVariables, target, i.value);
-            console.log(
-              target,
-              isSelectorsVariableDefined,
-              definedCssVariables
-            );
-            res.push(i);
+            console.log(def, elem);
             return res;
           } else {
-            // console.log(`failed isSelectorsVariableDefined: ${target}`, i.key);
             return false;
           }
+        }
+      }, []);
 
-          // return res; // Return the new Array
-        }, []);
-
-        return matches;
-      });
-
-      console.log(filtered);
-      return filtered;
-      // return diff;
+      console.log(varsNotUsed, strElements, strDefinitions);
+      return true;
     });
 
     function highlight(el) {
@@ -336,7 +264,7 @@ export default {
       elements,
       definitions,
       unused,
-      properties,
+      elementUsage,
       activeTab,
       highlight,
       stripVueDataAttrs: selector => {
