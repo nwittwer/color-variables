@@ -7,12 +7,7 @@ const elements = ref([]); // Array of DOM Element selectors (i.e. '.form', '.but
 
 export default function useColors() {
   function updateStyles() {
-    const newStyles = getRootStyles();
-    styles.value = JSON.parse(JSON.stringify(newStyles));
-    console.info(
-      `CSS var definitions (:root elements) ${styles.value.length}`,
-      styles.value
-    );
+    getRootStyles();
   }
 
   // Watch for :root variable changes
@@ -52,7 +47,7 @@ export default function useColors() {
   function getRootStyles() {
     console.log("Stylesheets loaded:", document.styleSheets);
 
-    elements.value = []; // This will replace the existing array
+    const newElementsArray = []; // Temporarily hold a new array of elements
 
     // Expects a CSS rule style
     const output = [].slice
@@ -76,7 +71,7 @@ export default function useColors() {
         // Create a list of all the classes that are using CSS Variables
         if (getCssVariables(cssRule)) {
           const arrayOfVariables = getCssVariables(cssRule);
-          elements.value.push(arrayOfVariables); // Add the name of the Class
+          newElementsArray.push(arrayOfVariables); // Add the name of the Class
         }
 
         // Continue creating a nice array of all the classes & variables in them
@@ -126,8 +121,11 @@ export default function useColors() {
         };
       });
 
-    // Replace the current elements value
-    // elements.value = newElementsArray;
+    // Update the elements
+    elements.value = [...newElementsArray];
+
+    // Set the new styles
+    styles.value = JSON.parse(JSON.stringify(output));
 
     return output;
   }
@@ -171,11 +169,11 @@ const getCssVariables = rule => {
 
   // The regex expression to look for
   // Tests: https://regexr.com/5a2pp
-  const test = new RegExp("(-{2})(?!$.)([a-z]|[A-Z])[^:;)]*", "g");
+  const regex = new RegExp("(-{2})(?!$.)([a-z]|[A-Z])[^:;)]*", "g");
 
   // Of the key/value pairs, which contain CSS Variables declarations or usages?
   const matches = testArr.filter(
-    rule => test.exec(rule.key) || test.exec(rule.value)
+    rule => regex.test(rule.key) || regex.test(rule.value)
   );
 
   if (testArr.length && matches.length) {
