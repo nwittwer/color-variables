@@ -65,28 +65,58 @@ $epro-light: (
 // It always appends "-mode"
 // https://nuxtjs.org/blog/going-dark-with-nuxtjs-color-mode/#how-does-it-work
 
-// .edc-3-mode {
-//   --color: #ebf4f1;
-//   --color-primary: #41b38a;
-//   --color-secondary: #fdf9f3;
-//   --bg: #091a28;
-//   --bg-secondary: #071521;
-//   --border-color: #0d2538;
-// }
+.epro-light-mode {
+  --fake-token: #123123;
+  --brand-primary-color-light: #8cb0b1;
+  --brand-primary-color: #00bcc0;
+  --brand-primary-color-dark: #008688;
+  --brand-secondary-color-light: #001eca;
+  --brand-secondary-color: #001799;
+  --brand-secondary-color-dark: #001170;
+  --text-high-contrast: black;
+  --text-high-contrast-inverted: white;
+  --fg-color: white;
+  --bg-color: #f5f5f5;
+  --bg-high-contrast: #424242;
+  --bg-high-contrast-inverted: white;
+  --utility-divider: #bebebe;
+  --utility-success: green;
+  --utility-error: red;
+}
 
-// .epro-dark-mode {
-//   --color: #ebf4f1;
-//   --color-primary: #41b38a;
-//   --color-secondary: #fdf9f3;
-//   --bg: #091a28;
-//   --bg-secondary: #071521;
-//   --border-color: #0d2538;
-// }
+.epro-dark-mode {
+  --brand-primary-color-light: #00d8db;
+  --brand-primary-color: #00bcc0;
+  --brand-primary-color-dark: #008688;
+  --brand-secondary-color-light: #001eca;
+  --brand-secondary-color: #001799;
+  --brand-secondary-color-dark: #001170;
+  --text-high-contrast: #ffffff;
+  --text-high-contrast-inverted: white;
+  --fg-color: #4a4a4a;
+  --bg-color: #27292d;
+  --bg-high-contrast: #313131;
+  --bg-high-contrast-inverted: white;
+  --utility-divider: #bebebe;
+  --utility-success: green;
+  --utility-error: red;
+}
 
-// .epro-light-mode {
-//   --color: #433422;
-//   --color-secondary: #504231;
-//   --bg: #f1e7d0;
-//   --bg-secondary: #eae0c9;
-//   --border-color: #ded0bf;
-// }
+.edc-3-mode {
+  --unused-variable: #000000;
+  --brand-primary-color-light: #395dc1;
+  --brand-primary-color: #2248b2;
+  --brand-primary-color-dark: #163386;
+  --brand-secondary-color-light: #7679ec;
+  --brand-secondary-color: #5d61e6;
+  --brand-secondary-color-dark: #3c40cc;
+  --text-high-contrast: black;
+  --text-high-contrast-inverted: white;
+  --fg-color: white;
+  --bg-color: #f5f5f5;
+  --bg-high-contrast: black;
+  --bg-high-contrast-inverted: white;
+  --utility-divider: #bebebe;
+  --utility-success: green;
+  --utility-error: red;
+}
