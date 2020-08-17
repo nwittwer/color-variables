@@ -3,13 +3,11 @@
     div.group
       div.group__header
         h2 Definitions
-      div.element(
-        v-for="element in definitions" 
-        :key="element.selector")
-        div.selector-name {{ element.selector }}
-        div.instances {{ element.values.length > 1 ? `${element.values.length} definitions` : `${element.values.length} definition` }}
-        div(v-for="properties in element.values" :key="properties.key")
-          template(v-if="isVariableUsed(properties.key, element.selector)")
+      div.element(v-for="definition in definitions" :key="definition.selector")
+        div.selector-name {{ definition.selector }}
+        div.instances {{ definition.values.length > 1 ? `${definition.values.length} definitions` : `${definition.values.length} definition` }}
+        div(v-for="properties in definition.values" :key="properties.key")
+          template(v-if="isVariableUsed(properties.key, definition.selector)")
             span {{ properties.key }}: {{ properties.value }}
           template(v-else)
             span(class="is-unused" title="This variable is defined but not being used by any DOM Elements") {{ properties.key }}: {{ properties.value }}
@@ -22,7 +20,8 @@
     div.group
       div.group__header
         h2 Usage
-      div.element(v-for="element in elementUsage" :key="element.selector" @mouseover="highlight(element.selector)")
+        input(type="search" v-model="searchTerm" placeholder="Search by element...")
+      div.element(v-for="element in filteredSearch" :key="element.selector" @mouseover="highlight(element.selector)")
         div.selector-name {{ stripVueDataAttrs(element.selector) }}
         div.instances {{ element.values.length > 1 ? `${element.values.length} variables used` : `${element.values.length} variable used` }}
         div(v-for="(properties, i) in element.values" :key="i")
@@ -37,8 +36,23 @@ import useColors from "~/compositions/useColors";
 export default {
   setup(props, context) {
     const { state } = useColors();
-    console.log(state);
-    const activeTab = ref(0);
+
+    const searchTerm = ref("");
+    const filteredSearch = computed(() => {
+      if (!searchTerm) return false;
+
+      const elements = unref(elementUsage);
+      const term = unref(searchTerm);
+      console.log("test", elements, term);
+
+      if (!elements || !elements.length) return false; // Can't search yet?
+
+      return elements.filter(el => {
+        return el.selector.toLowerCase().includes(term.toLowerCase());
+      });
+    });
+
+    const { definitions, unused, elementUsage } = state.computedValues;
 
     function highlight(el) {
       if ([":root", "html, body"].some(i => el.includes(i))) {
@@ -180,11 +194,12 @@ export default {
     }
 
     return {
-      definitions: state.computedValues.definitions,
-      unused: state.computedValues.unusedVariables,
-      elementUsage: state.computedValues.elementUsage,
-      activeTab,
+      definitions,
+      unused,
+      elementUsage,
       highlight,
+      searchTerm,
+      filteredSearch,
       stripVueDataAttrs: selector => {
         const str = "asd-0.testing";
         const regex = /\[(.*?)\]/g;

@@ -10,6 +10,7 @@ export const computedValues = {
     return unref(elementArray).filter(i => {
       // We're inside of one Array
       return i.values.find(e => {
+        // console.log("test5", e.key.includes("--") ? true (${e.key}): `false (${e.key})`);
         return e.key.includes("--");
       });
     });
