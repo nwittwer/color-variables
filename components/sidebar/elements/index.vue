@@ -32,7 +32,6 @@
             p Variables which were defined but never used by any DOM Elements
           div.element(v-for="element in unused" :key="element.selector")
             div {{ element.key }}
-   
 </template>
 
 <script>
