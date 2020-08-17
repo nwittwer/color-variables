@@ -7,7 +7,7 @@
 </template>
 
 <script>
-import Sidebar from "~/components/Sidebar.vue";
+import Sidebar from "~/components/sidebar/Sidebar.vue";
 
 export default {
   components: {
@@ -16,8 +16,7 @@ export default {
 };
 </script>
 
-
-<style>
+<style lang="scss">
 html,
 body {
   font-family: "Source Sans Pro", -apple-system, BlinkMacSystemFont, "Segoe UI",
@@ -32,6 +31,8 @@ body {
   height: 100%;
   margin: 0;
   padding: 0;
+  border: none;
+  overflow: hidden;
 }
 
 *,
@@ -41,12 +42,11 @@ body {
 }
 
 .container {
-  max-width: 1200px;
+  max-width: 100%;
   width: 100%;
-  padding: 0 2rem;
   margin: 0 auto;
   display: grid;
-  grid-template-columns: 4fr 1fr;
+  grid-template-columns: 4fr minmax(350px, 1fr);
   grid-template-areas:
     "content nav"
     "content nav";
@@ -54,6 +54,16 @@ body {
 
 .content {
   grid-area: content;
+  max-width: 100%;
+  padding: 0 2rem;
+  height: 100vh;
+  overflow: auto;
+
+  & > * {
+    margin: 0 auto;
+    max-width: 850px;
+    overflow: hidden;
+  }
 }
 
 .nav {
@@ -61,5 +71,8 @@ body {
   position: sticky;
   height: 100vh;
   top: 0;
+  overflow: auto;
+  padding: 0 0.5rem;
+  text-overflow: ellipsis;
 }
 </style>

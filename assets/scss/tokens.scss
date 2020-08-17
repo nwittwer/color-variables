@@ -1,0 +1,121 @@
+$grayscaleColors: (
+  10: #171717,
+  20: #2e2e2e,
+  30: #454545,
+  40: #5c5c5c,
+  50: #737373,
+  60: #8a8a8a,
+  70: #a1a1a1,
+  80: #b8b8b8,
+  90: #cfcfcf,
+  100: #e8e8e8
+) !default;
+
+// $epro-light: (
+//   "brand": #00bcc0,
+//   "medium": 500,
+//   "bold": 700
+// );
+
+// GLOBAL OVERRIDES
+:root {
+  // Brand
+  //// Primary color
+  --brand-primary-color-light: #00d8db;
+  --brand-primary-color: #00bcc0;
+  --brand-primary-color-dark: #008688;
+  //// Secondary color
+  --brand-secondary-color-light: #001eca;
+  --brand-secondary-color: #001799;
+  --brand-secondary-color-dark: #001170;
+
+  //////////////////////////////////////
+
+  // Text colors
+  //// Readability
+  --text-high-contrast: black;
+  --text-high-contrast-inverted: white;
+
+  //////////////////////////////////////
+
+  // Fill colors
+  // Main bg
+  --fg-color: white;
+  --bg-color: #c5c5c5;
+  --bg-high-contrast: black;
+  --bg-high-contrast-inverted: white;
+
+  //////////////////////////////////////
+
+  //// Utility
+  --utility-divider: #bebebe;
+  --utility-success: green;
+  --utility-error: red;
+}
+
+// Using Nuxt's color-mode module
+// It always appends "-mode"
+// https://nuxtjs.org/blog/going-dark-with-nuxtjs-color-mode/#how-does-it-work
+
+.epro-light-mode {
+  --fake-token: #123123;
+  --brand-primary-color-light: #8cb0b1;
+  --brand-primary-color: #00bcc0;
+  --brand-primary-color-dark: #008688;
+  --brand-secondary-color-light: #001eca;
+  --brand-secondary-color: #001799;
+  --brand-secondary-color-dark: #001170;
+  --text-high-contrast: black;
+  --text-high-contrast-inverted: white;
+  --fg-color: white;
+  --bg-color: #f5f5f5;
+  --bg-high-contrast: #424242;
+  --bg-high-contrast-inverted: white;
+  --utility-divider: #bebebe;
+  --utility-success: green;
+  --utility-error: red;
+
+  // Component-level overrides
+  // This is great for themes which might have certain uses
+  // where the colors of certain components don't meet accessibility guidelines
+  // .button--primary {
+  //   --brand-primary-color: pink; // Change the localized color inside of a component using it!
+  // }
+}
+
+.epro-dark-mode {
+  --brand-primary-color-light: #00d8db;
+  --brand-primary-color: #00bcc0;
+  --brand-primary-color-dark: #008688;
+  --brand-secondary-color-light: #001eca;
+  --brand-secondary-color: #001799;
+  --brand-secondary-color-dark: #001170;
+  --text-high-contrast: #ffffff;
+  --text-high-contrast-inverted: white;
+  --fg-color: #44515a;
+  --bg-color: #181c23;
+  --bg-high-contrast: #242931;
+  --bg-high-contrast-inverted: white;
+  --utility-divider: #bebebe;
+  --utility-success: green;
+  --utility-error: red;
+}
+
+.edc-3-mode {
+  --unused-variable: #000000;
+  --brand-primary-color-light: #395dc1;
+  --brand-primary-color: #2248b2;
+  --brand-primary-color-dark: #163386;
+  --brand-secondary-color-light: #7679ec;
+  --brand-secondary-color: #5d61e6;
+  --brand-secondary-color-dark: #3c40cc;
+  --text-high-contrast: black;
+  --text-high-contrast-inverted: white;
+  --fg-color: white;
+  --bg-color: #f5f5f5;
+  --bg-high-contrast: black;
+  --bg-high-contrast-inverted: white;
+  --utility-divider: #bebebe;
+  --utility-success: green;
+  --utility-error: red;
+}
