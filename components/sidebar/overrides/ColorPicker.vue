@@ -5,13 +5,19 @@
       div.form-group
         span.color-preview(@click.stop="togglePicker" :style="`background: ${colorValue}`")
         div.group
-          span {{ props.name }}
-          input(type="text" class="form-control" v-model="colorValue")
+          div(v-if="isVariableUsed(props.name)")
+            span {{ props.name }}
+            input(type="text" class="form-control" v-model="colorValue")
+          div(v-else class="is-unused" title="This variable is defined but not being used by any DOM Elements")
+            span {{ props.name }}
+            input(type="text" class="form-control" v-model="colorValue")
+
 </template>
 
 <script>
 import { Chrome } from "vue-color";
-import { ref, watch, onMounted } from "@nuxtjs/composition-api";
+import { ref, unref, watch, onMounted } from "@nuxtjs/composition-api";
+import useColors from "~/compositions/useColors";
 
 export default {
   // Example: https://codepen.io/peiman/pen/drXmxm
@@ -19,10 +25,12 @@ export default {
     "chrome-picker": Chrome
   },
   props: {
+    // name, AKA the name of the CSS Variable key
     name: {
       type: String,
       required: true
     },
+    // The CSS variable's value
     value: {
       type: String,
       default: "#000000"
@@ -32,6 +40,7 @@ export default {
     const colorValue = ref(props.value);
     const pickerIsOpen = ref(false);
     const domElement = ref(null);
+    const { state } = useColors();
 
     // Update the props
     function setProps() {
@@ -92,6 +101,16 @@ export default {
       updateValue: val => {
         const { hex } = val;
         colorValue.value = hex;
+      },
+      isVariableUsed: (variable, selector) => {
+        // TODO Refactor a shared version of this; it's used in Elements sidebar too
+        let isUsed = unref(state.computedValues.usedVariables).find(used => {
+          // Return the ones that do not match
+          return used.key === variable;
+        });
+
+        // Return variables which that are used
+        return isUsed ? true : false;
       }
     };
   }
@@ -141,5 +160,9 @@ export default {
     left: 0;
     z-index: 9;
   }
+}
+
+.is-unused {
+  color: red;
 }
 </style>

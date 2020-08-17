@@ -12,7 +12,7 @@
           template(v-if="isVariableUsed(properties.key, element.selector)")
             span {{ properties.key }}: {{ properties.value }}
           template(v-else)
-            span(class="is-unused" title="This variable is not being used") {{ properties.key }}: {{ properties.value }}
+            span(class="is-unused" title="This variable is defined but not being used by any DOM Elements") {{ properties.key }}: {{ properties.value }}
     div.group
       div.group__header
         h2 Unused CSS Variables
