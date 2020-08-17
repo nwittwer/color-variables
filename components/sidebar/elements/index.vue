@@ -1,32 +1,38 @@
 <template lang="pug">
   div
-    div.group
-      div.group__header
-        h2 Definitions
-      div.element(v-for="definition in definitions" :key="definition.selector")
-        div.selector-name {{ definition.selector }}
-        div.instances {{ definition.values.length > 1 ? `${definition.values.length} definitions` : `${definition.values.length} definition` }}
-        div(v-for="properties in definition.values" :key="properties.key")
-          template(v-if="isVariableUsed(properties.key, definition.selector)")
-            span {{ properties.key }}: {{ properties.value }}
-          template(v-else)
-            span(class="is-unused" title="This variable is defined but not being used by any DOM Elements") {{ properties.key }}: {{ properties.value }}
-    div.group
-      div.group__header
-        h2 Unused CSS Variables
-        p Variables which were defined but never used by any DOM Elements
-      div.element(v-for="element in unused" :key="element.selector")
-        div {{ element.key }}
-    div.group
-      div.group__header
-        h2 Usage
-        input(type="search" v-model="searchTerm" placeholder="Search by element...")
-      div.element(v-for="element in filteredSearch" :key="element.selector" @mouseover="highlight(element.selector)")
-        div.selector-name {{ stripVueDataAttrs(element.selector) }}
-        div.instances {{ element.values.length > 1 ? `${element.values.length} variables used` : `${element.values.length} variable used` }}
-        div(v-for="(properties, i) in element.values" :key="i")
-          span {{ properties.key }}:
-          span {{ properties.value }}
+    b-tabs
+      b-tab-item(label="Definitions")
+        div.group
+          div.group__header
+            h2 Definitions
+          div.element(v-for="definition in definitions" :key="definition.selector")
+            div.selector-name {{ definition.selector }}
+            div.instances {{ definition.values.length > 1 ? `${definition.values.length} definitions` : `${definition.values.length} definition` }}
+            div(v-for="properties in definition.values" :key="properties.key")
+              template(v-if="isVariableUsed(properties.key, definition.selector)")
+                span {{ properties.key }}: {{ properties.value }}
+              template(v-else)
+                span(class="is-unused" title="This variable is defined but not being used by any DOM Elements") {{ properties.key }}: {{ properties.value }}
+      b-tab-item(label="Unused")
+        div.group
+          div.group__header
+            h2 Unused CSS Variables
+            p Variables which were defined but never used by any DOM Elements
+          div.element(v-for="element in unused" :key="element.selector")
+            div {{ element.key }}
+      b-tab-item(label="Search")
+        div.group
+          div.group__header
+            h2 Usage
+            p Search through all the DOM Elements on the page that are using 1+ CSS Variable.
+            input(type="search" v-model="searchTerm" placeholder="Search by element...")
+          div.element(v-for="element in filteredSearch" :key="element.selector" @mouseover="highlight(element.selector)")
+            div.selector-name {{ stripVueDataAttrs(element.selector) }}
+            div.instances {{ element.values.length > 1 ? `${element.values.length} variables used` : `${element.values.length} variable used` }}
+            div(v-for="(properties, i) in element.values" :key="i")
+              span {{ properties.key }}:
+              span {{ properties.value }}
+   
 </template>
 
 <script>
