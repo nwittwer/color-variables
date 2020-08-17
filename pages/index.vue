@@ -21,13 +21,19 @@
       button.button--primary Button
       button.button--secondary Button
     section
+      .dropdown
+        .dropdown__label Actions...
+        .dropdown__content
+          p Hi there
+    section
       input(type="text" value="Enter some text...")
       textarea Enter some text...
     section
       .modal
         .modal__inner
           h2 Title
-          p This is some text
+          .divider
+          p Generating random paragraphs can be an excellent way for writers to get their creative flow going at the beginning of the day. The writer has no idea what topic the random paragraph will be about when it appears. This forces the writer to use creativity to complete one of three common writing challenges. The writer can use the paragraph as the first one of a short story and build upon it. A second option is to use the random paragraph somewhere in a short story they create. The third option is to have the random paragraph be the ending paragraph in a short story. No matter which of these challenges is undertaken, the writer is forced to use creativity to incorporate the paragraph into their writing.
         .modal__background
     section
       .card
@@ -35,6 +41,7 @@
         .card__image
         .card__content
           h3 Clincase ePRO
+          .divider
           p This is some other text content
           a(href="#") Link
         .card__footer
@@ -153,6 +160,15 @@ a {
   padding: 1rem;
 }
 
+.divider {
+  width: 100%;
+  display: block;
+  position: relative;
+  border-bottom: 1px solid var(--utility-divider);
+  margin: 1rem 0;
+  content: "";
+}
+
 ///////////////////////////////////
 // Buttons
 button {
@@ -164,6 +180,7 @@ button {
   padding: 0.6em 2.2em;
   cursor: pointer;
   background: #5f8ee4;
+  user-select: none;
 
   &.button--primary {
     color: var(--text-high-contrast-inverted);
@@ -185,6 +202,36 @@ button {
 }
 
 ///////////////////////////////////
+// Dropdowns
+.dropdown {
+  position: relative;
+  display: inline-block;
+
+  // To enable interactivity:
+  // &:hover .dropdown__content {
+  //   display: block;
+  // }
+
+  .dropdown__label {
+    @extend button; // Use the base button styles
+    color: var(--text-high-contrast-inverted);
+    background: var(--brand-primary-color);
+  }
+
+  .dropdown__content {
+    // display: none;
+    color: var(--text-high-contrast);
+    display: block;
+    position: absolute;
+    background-color: var(--fg-color);
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+    padding: 12px 16px;
+    z-index: 1;
+  }
+}
+
+///////////////////////////////////
 // Modals
 .modal {
   position: relative;
@@ -202,6 +249,8 @@ button {
     width: 50%;
     display: flex;
     flex-direction: column;
+    padding: 2rem;
+    overflow: auto;
   }
 
   .modal__background {
