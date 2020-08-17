@@ -19,7 +19,11 @@
       p.error This is a warning!
     section
       button.button--primary Button
+      button.button.button--primary(disabled="disabled") Button
+      br
+      br
       button.button--secondary Button
+      button.button.button--secondary(disabled="disabled") Button
     section
       .dropdown
         .dropdown__trigger
@@ -27,8 +31,11 @@
         .dropdown__content
           p Hi there
     section
-      input(type="text" value="Enter some text...")
-      textarea Enter some text...
+      label Hi
+        input(type="text" value="Enter some text...")
+      br
+      label Comment
+        textarea Enter some text...
     section
       .modal
         .modal__inner
@@ -236,7 +243,7 @@ button {
     position: absolute;
     background-color: var(--fg-color);
     min-width: 160px;
-    box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+    box-shadow: 0px 8px 16px 0px var(--bg-high-contrast);
     padding: 12px 16px;
     z-index: 1;
   }

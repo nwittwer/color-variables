@@ -1,6 +1,18 @@
 <template lang="pug">
   div
     b-tabs
+      b-tab-item(label="Search")
+        div.group
+          div.group__header
+            h2 Usage
+            p Search through all the DOM Elements on the page that are using 1+ CSS Variable.
+            b-input(type="search" rounded v-model="searchTerm" placeholder="Search by element...")
+          div.element(v-for="element in filteredSearch" :key="element.selector" @mouseover="highlight(element.selector)")
+            div.selector-name {{ stripVueDataAttrs(element.selector) }}
+            div.instances {{ element.values.length > 1 ? `${element.values.length} variables used` : `${element.values.length} variable used` }}
+            div(v-for="(properties, i) in element.values" :key="i")
+              span {{ properties.key }}:
+              span {{ properties.value }}
       b-tab-item(label="Definitions")
         div.group
           div.group__header
@@ -20,19 +32,6 @@
             p Variables which were defined but never used by any DOM Elements
           div.element(v-for="element in unused" :key="element.selector")
             div {{ element.key }}
-      b-tab-item(label="Search")
-        div.group
-          div.group__header
-            h2 Usage
-            p Search through all the DOM Elements on the page that are using 1+ CSS Variable.
-            input(type="search" v-model="searchTerm" placeholder="Search by element...")
-          div.element(v-for="element in filteredSearch" :key="element.selector" @mouseover="highlight(element.selector)")
-            div.selector-name {{ stripVueDataAttrs(element.selector) }}
-            div.instances {{ element.values.length > 1 ? `${element.values.length} variables used` : `${element.values.length} variable used` }}
-            div(v-for="(properties, i) in element.values" :key="i")
-              span {{ properties.key }}:
-              span {{ properties.value }}
-   
 </template>
 
 <script>

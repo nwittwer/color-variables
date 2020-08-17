@@ -1,6 +1,6 @@
 <template lang="pug">
   div
-    button(@click="copyToClipboard(props.styles)") Copy overrides
+    b-button(type="is-primary" @click="copyToClipboard(props.styles)") Copy overrides
 </template>
 
 <script>

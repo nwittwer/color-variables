@@ -1,6 +1,7 @@
 <template lang="pug">
   div
-    select(v-model="selected" @input="changed")
+    span Theme 
+    b-select(v-model="selected" @input="changed")
       option(disabled value="") Please select one
       option(v-for="color of colors" :key="color" :value="color") {{ color }}
 </template>
@@ -14,10 +15,9 @@ export default {
     };
   },
   methods: {
-    changed(event) {
-      const val = event.target.value;
-      this.selected = val;
-      this.$colorMode.preference = val;
+    changed(newValue) {
+      this.selected = newValue;
+      this.$colorMode.preference = newValue;
     }
   },
   mounted() {

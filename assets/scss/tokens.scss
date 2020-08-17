@@ -58,7 +58,6 @@ $grayscaleColors: (
 // https://nuxtjs.org/blog/going-dark-with-nuxtjs-color-mode/#how-does-it-work
 
 .epro-light-mode {
-  --fake-token: #123123;
   --brand-primary-color-light: #8cb0b1;
   --brand-primary-color: #00bcc0;
   --brand-primary-color-dark: #008688;
@@ -102,7 +101,6 @@ $grayscaleColors: (
 }
 
 .edc-3-mode {
-  --unused-variable: #000000;
   --brand-primary-color-light: #395dc1;
   --brand-primary-color: #2248b2;
   --brand-primary-color-dark: #163386;
