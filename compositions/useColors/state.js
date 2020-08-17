@@ -1,8 +1,16 @@
-import { ref, computed, unref, reactive } from "@nuxtjs/composition-api";
+import { ref, computed, watch, unref, reactive } from "@nuxtjs/composition-api";
 import { cssVariablesFromString } from "./helpers";
 
 export const styles = ref([]); // Array of :root styles
 export const elements = ref([]); // Array of DOM Element selectors (i.e. '.form', '.button')
+
+export const variableUsage = ref([]); // Array of used/unused information
+
+// Update usage variables when styles change
+watch(styles, () => {
+  const { used, unused } = getVariableUsage();
+  variableUsage.value = { used, unused };
+});
 
 export const computedValues = {
   // Filter down to the Elements where a CSS Var is defined
@@ -24,14 +32,14 @@ export const computedValues = {
       });
     });
   }),
+  // Used CSS variables
   usedVariables: computed(() => {
-    const { used } = getVariableUsage();
+    const { used } = unref(variableUsage);
     return used;
   }),
   // Unused CSS variables
   unusedVariables: computed(() => {
-    const { unused } = getVariableUsage();
-    console.log("unused", unused, getVariableUsage());
+    const { unused } = unref(variableUsage);
     return unused;
   })
 };
@@ -77,20 +85,80 @@ function getVariableUsage() {
     unref(computedValues.elementUsage).map(elem => elem.values)
   );
 
-  const used = strDefinitions.filter(def => {
-    // console.log("testing1", strElements, def.key);
-    // Return the elements which used a defined CSS variable
-    return strElements.find(el => cssVariablesFromString(el.value) === def.key);
-  });
+  let used = []; // Used
+  let unused = []; // Unused
 
-  const unused = strDefinitions.filter(def => {
-    if (!def) return false;
-    return !used.find(used => cssVariablesFromString(used.key) === def.key);
-  });
-  // console.log("quick", {
-  //   used,
-  //   unused
+  // For each definition...
+  // Return the definitions which match
+  for (const definition of strDefinitions) {
+    // Return the objects for Elements that used a defined CSS variable
+
+    // Check if there's a definition matching the element
+    // If so, it's a match!
+    strElements.find(el => {
+      // Check
+      const match = definition.key === cssVariablesFromString(el.value);
+
+      if (match) {
+        // return true;
+        // Used
+        const exists = used.some(i => {
+          return i.key === definition.key;
+        });
+        if (!exists) used.push(definition); // Make sure it doesn't already exist
+      } else {
+        // Unused
+        const exists = unused.some(i => i.key === definition.key);
+        if (!exists) {
+          console.log("unused", definition, el);
+          unused.push(definition);
+        } // Make sure it doesn't already exist
+      }
+
+      console.log("quick", match, el.value, definition.key);
+    });
+  }
+  // strDefinitions.filter(def => {});
+
+  // const unused = strDefinitions.filter(def => {
+
+  //   // Get a list of the elements that aren't in the definitions nor the elements
+  //   // These are the unused ones
+
+  //   // const match = used.find(
+  //   //   used => cssVariablesFromString(used.key) !== def.key
+  //   // );
+
+  //   // console.log("quick", !!match);
+
+  //   // return match ? match : match;
+
+  //   const array1 = strElements; // All
+  //   const array2 = used; // Used
+
+  //   // What's in array 1 that's not in array 2?
+  //   // const missing = array1.filter((i => a => a !== array2[i] || !++i)(0));
+  //   // const missing = array1.filter(
+  //   //   e => !array2.includes(e.key) || !array2.includes(e.value)
+  //   // );
+  //   // const missing = array1.filter(e => array2.indexOf(e.key) > -1);
+  //   // const missing = array1.filter(e => array2.indexOf(def.key) === -1);
+
+  //   // Check if
+
+  //   console.log("quick", {
+  //     all: array1.length,
+  //     used: array2.length,
+  //     missing: missing.length
+  //   });
+
+  //   return missing;
   // });
+  console.log("quick", {
+    total: strElements,
+    used,
+    unused
+  });
 
   return {
     used,

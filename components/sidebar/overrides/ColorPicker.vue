@@ -9,7 +9,7 @@
             span {{ props.name }}
             input(type="text" class="form-control" v-model="colorValue")
           div(v-else class="is-unused" title="This variable is defined but not being used by any DOM Elements")
-            span {{ props.name }}
+            span {{ props.name }} 
             input(type="text" class="form-control" v-model="colorValue")
 
 </template>
@@ -102,12 +102,24 @@ export default {
         const { hex } = val;
         colorValue.value = hex;
       },
-      isVariableUsed: (variable, selector) => {
+      isVariableUsed: function(variable) {
         // TODO Refactor a shared version of this; it's used in Elements sidebar too
         // Return variables which that are used
-        return unref(state.computedValues.usedVariables).find(used => {
+        const result = unref(state.computedValues.usedVariables).find(used => {
           return used.key === variable;
         });
+
+        result
+          ? console.log(
+              variable,
+              result.key,
+              !!result,
+              unref(state.computedValues.usedVariables),
+              unref(state.computedValues.unusedVariables)
+            )
+          : "";
+
+        return !!result; // Return true or false
       }
     };
   }

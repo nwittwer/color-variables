@@ -210,11 +210,13 @@ export default {
         const regex = /\[(.*?)\]/g;
         return selector.replace(regex, ""); // Remove the [data-v-*]
       },
-      isVariableUsed: (variable, selector) => {
-        // True if a mtach is found
-        return unref(state.computedValues.usedVariables).find(used => {
+      isVariableUsed: variable => {
+        // True if a match is found
+        const result = unref(state.computedValues.usedVariables).find(used => {
           return used.key === variable;
         });
+
+        return result ? result : false;
       }
     };
   }
