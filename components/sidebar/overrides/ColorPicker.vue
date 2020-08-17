@@ -104,13 +104,10 @@ export default {
       },
       isVariableUsed: (variable, selector) => {
         // TODO Refactor a shared version of this; it's used in Elements sidebar too
-        let isUsed = unref(state.computedValues.usedVariables).find(used => {
-          // Return the ones that do not match
+        // Return variables which that are used
+        return unref(state.computedValues.usedVariables).find(used => {
           return used.key === variable;
         });
-
-        // Return variables which that are used
-        return isUsed ? true : false;
       }
     };
   }

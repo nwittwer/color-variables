@@ -11,28 +11,24 @@ $grayscaleColors: (
   100: #e8e8e8
 ) !default;
 
-$epro-light: (
-  "brand": #00bcc0,
-  "medium": 500,
-  "bold": 700
-);
+// $epro-light: (
+//   "brand": #00bcc0,
+//   "medium": 500,
+//   "bold": 700
+// );
 
 // GLOBAL OVERRIDES
 :root {
-  --unused-variable: #000000;
-
   // Brand
-  //// Primary
+  //// Primary color
   --brand-primary-color-light: #00d8db;
   --brand-primary-color: #00bcc0;
   --brand-primary-color-dark: #008688;
-  //// Secondary
+  //// Secondary color
   --brand-secondary-color-light: #001eca;
   --brand-secondary-color: #001799;
   --brand-secondary-color-dark: #001170;
 
-  //////////////////////////////////////
-  //////////////////////////////////////
   //////////////////////////////////////
 
   // Text colors
@@ -40,8 +36,6 @@ $epro-light: (
   --text-high-contrast: black;
   --text-high-contrast-inverted: white;
 
-  //////////////////////////////////////
-  //////////////////////////////////////
   //////////////////////////////////////
 
   // Fill colors
@@ -51,8 +45,6 @@ $epro-light: (
   --bg-high-contrast: black;
   --bg-high-contrast-inverted: white;
 
-  //////////////////////////////////////
-  //////////////////////////////////////
   //////////////////////////////////////
 
   //// Utility
@@ -82,6 +74,13 @@ $epro-light: (
   --utility-divider: #bebebe;
   --utility-success: green;
   --utility-error: red;
+
+  // Component-level overrides
+  // This is great for themes which might have certain uses
+  // where the colors of certain components don't meet accessibility guidelines
+  // .button--primary {
+  //   --brand-primary-color: pink; // Change the localized color inside of a component using it!
+  // }
 }
 
 .epro-dark-mode {
@@ -93,9 +92,9 @@ $epro-light: (
   --brand-secondary-color-dark: #001170;
   --text-high-contrast: #ffffff;
   --text-high-contrast-inverted: white;
-  --fg-color: #4a4a4a;
-  --bg-color: #27292d;
-  --bg-high-contrast: #313131;
+  --fg-color: #44515a;
+  --bg-color: #181c23;
+  --bg-high-contrast: #242931;
   --bg-high-contrast-inverted: white;
   --utility-divider: #bebebe;
   --utility-success: green;

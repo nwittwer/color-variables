@@ -212,10 +212,10 @@ button {
   //   display: block;
   // }
 
-  .dropdown__label {
-    @extend button; // Use the base button styles
-    color: var(--text-high-contrast-inverted);
-    background: var(--brand-primary-color);
+  .dropdown__trigger {
+    // @extend button; // Use the base button styles
+    // color: var(--text-high-contrast-inverted);
+    // background: var(--brand-primary-color);
   }
 
   .dropdown__content {

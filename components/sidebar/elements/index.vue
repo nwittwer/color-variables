@@ -43,7 +43,7 @@ export default {
 
       const elements = unref(elementUsage);
       const term = unref(searchTerm);
-      console.log("test", elements, term);
+      // console.log("test", elements, term);
 
       if (!elements || !elements.length) return false; // Can't search yet?
 
@@ -206,14 +206,10 @@ export default {
         return selector.replace(regex, ""); // Remove the [data-v-*]
       },
       isVariableUsed: (variable, selector) => {
-        let isUsed = unref(state.computedValues.usedVariables).find(used => {
-          // Return the ones that do not match
-          console.log("used", used, variable);
+        // True if a mtach is found
+        return unref(state.computedValues.usedVariables).find(used => {
           return used.key === variable;
         });
-
-        // Return variables which that are used
-        return isUsed ? true : false;
       }
     };
   }

@@ -87,10 +87,10 @@ function getVariableUsage() {
     if (!def) return false;
     return !used.find(used => cssVariablesFromString(used.key) === def.key);
   });
-  console.log("quick", {
-    used,
-    unused
-  });
+  // console.log("quick", {
+  //   used,
+  //   unused
+  // });
 
   return {
     used,
