@@ -1,4 +1,5 @@
 import { ref, computed, unref, reactive } from "@nuxtjs/composition-api";
+import { cssVariablesFromString } from "./helpers";
 
 export const styles = ref([]); // Array of :root styles
 export const elements = ref([]); // Array of DOM Element selectors (i.e. '.form', '.button')
@@ -22,47 +23,15 @@ export const computedValues = {
       });
     });
   }),
+  usedVariables: computed(() => {
+    const { used } = getVariableUsage();
+    return used;
+  }),
   // Unused CSS variables
   unusedVariables: computed(() => {
-    // // Flatten the array of arrays into one flat array
-    // // https://stackoverflow.com/a/16299004/1114901
-    const flatten = arr => arr.reduce((p, n) => p.concat(n), []);
-
-    // Find out which CSS variables are not being used by any DOMElements
-    // Return: ["--var-name-here", "--var-name-here-2"]
-    function getUnusedVariables() {
-      // This is an array of the variables as strings// All the variable definitions
-      const strDefinitions = flatten(
-        unref(computedValues.definitions).map(elem => elem.values)
-      );
-      // All the Elements
-      const strElements = flatten(
-        unref(computedValues.elementUsage).map(elem => elem.values)
-      );
-
-      const varsNotUsed = strElements.reduce((res, elem) => {
-        // Does the def.key exist in the elem.value?
-        // If not, it isn't being used
-        for (let def of strDefinitions) {
-          const val = def.key;
-          // Find only the ones not included
-          if (elem.value.includes(val) === false) {
-            // Prevent adding duplicate values
-            if (res.includes(val) === false) {
-              res.push(val);
-            }
-            console.log(def, elem);
-            return res;
-          } else {
-            return false;
-          }
-        }
-      }, []);
-
-      return varsNotUsed;
-    }
-
-    return getUnusedVariables(); // Finally, return a nice list back to the FE
+    const { unused } = getVariableUsage();
+    console.log("unused", unused, getVariableUsage());
+    return unused;
   })
 };
 
@@ -74,3 +43,56 @@ const elementArray = computed(() => {
     return item;
   });
 });
+
+// Find out which CSS variables are not being used by any DOMElements
+// Return: ["--var-name-here", "--var-name-here-2"]
+// Returns two array: [used], [unused]
+function getVariableUsage() {
+  // // Flatten the array of arrays into one flat array
+  // // https://stackoverflow.com/a/16299004/1114901
+  const flatten = arr => arr.reduce((p, n) => p.concat(n), []);
+
+  // All the variable definitions, stripped down to an Array of [key, value] pairs
+  let strDefinitions = unref(computedValues.definitions).flatMap(def => {
+    // Return a new array that's filtered
+    return def.values.reduce(
+      (previousValue, currentValue, currentIndex, array) => {
+        previousValue.push(currentValue);
+        return previousValue.flat();
+      },
+      []
+    );
+  });
+  strDefinitions = flatten(strDefinitions.map(elem => elem));
+
+  ///////////////////////////////
+  ///////////////////////////////
+  ///////////////////////////////
+  ///////////////////////////////
+  ///////////////////////////////
+
+  // All the Elements
+  const strElements = flatten(
+    unref(computedValues.elementUsage).map(elem => elem.values)
+  );
+
+  const used = strDefinitions.filter(def => {
+    // console.log("testing1", strElements, def.key);
+    // Return the elements which used a defined CSS variable
+    return strElements.find(el => cssVariablesFromString(el.value) === def.key);
+  });
+
+  const unused = strDefinitions.filter(def => {
+    if (!def) return false;
+    return !used.find(used => cssVariablesFromString(used.key) === def.key);
+  });
+  console.log("quick", {
+    used,
+    unused
+  });
+
+  return {
+    used,
+    unused
+  };
+}

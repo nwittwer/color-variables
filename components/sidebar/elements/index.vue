@@ -5,18 +5,20 @@
         h2 Definitions
       div.element(
         v-for="element in definitions" 
-        :key="element.selector" 
-        @mouseover="highlight(element.selector)")
+        :key="element.selector")
         div.selector-name {{ element.selector }}
         div.instances {{ element.values.length > 1 ? `${element.values.length} definitions` : `${element.values.length} definition` }}
-        div(v-for="(properties, i) in element.values" :key="i" :class="{ 'is-unused' : !isVariableUsed(properties.key) }")
-          span {{ properties.key }}: {{ properties.value }}
+        div(v-for="properties in element.values" :key="properties.key")
+          template(v-if="isVariableUsed(properties.key, element.selector)")
+            span {{ properties.key }}: {{ properties.value }}
+          template(v-else)
+            span(class="is-unused" title="This variable is not being used") {{ properties.key }}: {{ properties.value }}
     div.group
       div.group__header
         h2 Unused CSS Variables
         p Variables which were defined but never used by any DOM Elements
       div.element(v-for="element in unused" :key="element.selector")
-        div {{ element }}
+        div {{ element.key }}
     div.group
       div.group__header
         h2 Usage
@@ -178,7 +180,6 @@ export default {
     }
 
     return {
-      elements: state.elements,
       definitions: state.computedValues.definitions,
       unused: state.computedValues.unusedVariables,
       elementUsage: state.computedValues.elementUsage,
@@ -189,8 +190,15 @@ export default {
         const regex = /\[(.*?)\]/g;
         return selector.replace(regex, ""); // Remove the [data-v-*]
       },
-      isVariableUsed: variable => {
-        return !unref(state.computedValues.unusedVariables).includes(variable);
+      isVariableUsed: (variable, selector) => {
+        let isUsed = unref(state.computedValues.usedVariables).find(used => {
+          // Return the ones that do not match
+          console.log("used", used, variable);
+          return used.key === variable;
+        });
+
+        // Return variables which that are used
+        return isUsed ? true : false;
       }
     };
   }

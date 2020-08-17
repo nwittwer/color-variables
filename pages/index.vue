@@ -18,8 +18,8 @@
       br
       p.error This is a warning!
     section
-      button.primary Button
-      button.secondary Button
+      button.button--primary Button
+      button.button--secondary Button
     section
       input(type="text" value="Enter some text...")
       textarea Enter some text...
@@ -165,7 +165,7 @@ button {
   cursor: pointer;
   background: #5f8ee4;
 
-  &.primary {
+  &.button--primary {
     color: var(--text-high-contrast-inverted);
     background: var(--brand-primary-color);
 
@@ -174,7 +174,7 @@ button {
     }
   }
 
-  &.secondary {
+  &.button--secondary {
     color: var(--text-high-contrast-inverted);
     background: var(--brand-secondary-color);
 
@@ -236,5 +236,15 @@ button {
   .card__footer {
     padding: 1rem;
   }
+}
+
+///////////////////////////////////
+// Inputs
+
+input[type="text"],
+input[type="search"],
+textarea {
+  color: var(--text-high-contrast);
+  background: var(--fg-color);
 }
 </style>
