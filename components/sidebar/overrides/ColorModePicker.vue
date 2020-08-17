@@ -19,6 +19,9 @@ export default {
       this.selected = val;
       this.$colorMode.preference = val;
     }
+  },
+  mounted() {
+    this.selected = this.$colorMode.preference;
   }
 };
 </script>
