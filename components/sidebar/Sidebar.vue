@@ -1,13 +1,13 @@
 <template lang="pug">
-  div.sidebar
-    h2 Themes
-    ColorModePicker
-    b-tabs(v-model="activeTab")
-      b-tab-item(label="Colors")
-        h2 Color overrides
-        ColorVariable
-      b-tab-item(label="Elements")
-        DomElements
+  div
+    div.sidebar()
+      ColorModePicker
+      b-tabs(v-model="activeTab")
+        b-tab-item(label="Colors")
+          h2 Color overrides
+          ColorVariable
+        b-tab-item(label="Elements")
+          DomElements
 </template>
 
 <script>
@@ -29,10 +29,4 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped>
-.sidebar {
-  border-left: 1px solid #a0a0a0;
-  color: #353535;
-  background: #efefef;
-}
-</style>
+<style lang="scss" scoped></style>
