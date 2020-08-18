@@ -86,38 +86,59 @@ function getVariableUsage() {
   );
 
   let used = []; // Used
-  let unused = []; // Unused
+  // let unused = []; // Unused
+
+  // via https://stackoverflow.com/a/52003732/1114901
+  const unused = strDefinitions.reduce((newArray, item, index, array) => {
+    const definedVariableName = item.key; // Each definition
+    const usedVariableNames = strElements.map(el =>
+      cssVariablesFromString(el.value)
+    );
+
+    const diff = usedVariableNames.filter(
+      name => !definedVariableName.includes(name)
+    );
+
+    if (diff.length && !newArray.some(i => i.key === item.key)) {
+      // Make sure this doesn't exist in the new array
+      newArray.push(item); // Add this item
+    }
+
+    console.log("used", newArray, item);
+
+    return newArray; // return the end Array
+  }, []);
 
   // For each definition...
   // Return the definitions which match
-  for (const definition of strDefinitions) {
-    // Return the objects for Elements that used a defined CSS variable
+  // for (const definition of strDefinitions) {
+  //   // Return the objects for Elements that used a defined CSS variable
 
-    // Check if there's a definition matching the element
-    // If so, it's a match!
-    strElements.find(el => {
-      // Check
-      const match = definition.key === cssVariablesFromString(el.value);
+  //   // Check if there's a definition matching the element
+  //   // If so, it's a match!
+  //   strElements.find(el => {
+  //     // Check
+  //     const match = definition.key === cssVariablesFromString(el.value);
 
-      if (match) {
-        // return true;
-        // Used
-        const exists = used.some(i => {
-          return i.key === definition.key;
-        });
-        if (!exists) used.push(definition); // Make sure it doesn't already exist
-      } else {
-        // Unused
-        const exists = unused.some(i => i.key === definition.key);
-        if (!exists) {
-          console.log("unused", definition, el);
-          unused.push(definition);
-        } // Make sure it doesn't already exist
-      }
+  //     if (match) {
+  //       // return true;
+  //       // Used
+  //       const exists = used.some(i => {
+  //         return i.key === definition.key;
+  //       });
+  //       if (!exists) used.push(definition); // Make sure it doesn't already exist
+  //     } else {
+  //       // Unused
+  //       const exists = unused.some(i => i.key === definition.key);
+  //       if (!exists) {
+  //         console.log("unused", definition, el);
+  //         unused.push(definition);
+  //       } // Make sure it doesn't already exist
+  //     }
 
-      console.log("quick", match, el.value, definition.key);
-    });
-  }
+  //     console.log("quick", match, el.value, definition.key);
+  //   });
+  // }
   // strDefinitions.filter(def => {});
 
   // const unused = strDefinitions.filter(def => {
