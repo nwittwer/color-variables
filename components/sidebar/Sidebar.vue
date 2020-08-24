@@ -3,10 +3,9 @@
     div.sidebar()
       ColorModePicker
       b-tabs(v-model="activeTab")
-        b-tab-item(label="Colors")
-          h2 Color overrides
+        b-tab-item(label="Tokens")
           ColorVariable
-        b-tab-item(label="Elements")
+        b-tab-item(label="Implementations")
           DomElements
 </template>
 
@@ -28,6 +27,5 @@ export default {
   }
 };
 </script>
-
 
 <style lang="scss" scoped></style>

@@ -1,5 +1,5 @@
 <template lang="pug">
-  div
+  div.header
     span Theme 
     b-select(v-model="selected" @input="changed")
       option(disabled value="") Please select one
@@ -30,5 +30,15 @@ export default {
 li {
   cursor: pointer;
   margin: 1rem auto;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  padding: 0.5rem 0;
+
+  & > * {
+    margin-left: 1rem;
+  }
 }
 </style>
