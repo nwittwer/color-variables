@@ -1,6 +1,6 @@
-# codesandbox-nuxt
+# CSS Color Variables
 
-> Nuxt starter for CodeSandBox (used for https://template.nuxtjs.org)
+> A tool for prototyping color combinations and creating UI themes with a minimal number of variables
 
 ## Build Setup
 
